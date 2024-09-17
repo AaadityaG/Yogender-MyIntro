@@ -1,0 +1,7 @@
+#BackgroundDiv{
+    /* background-image: url('/LoginBanner.png'); */
+    background-image: url(https://extuent.ai/bg/myintro-bg-video_clip.jpg);
+             background-repeat: no-repeat;
+            background-size: cover;
+            margin-bottom: 10px;
+}
