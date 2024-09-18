@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [error, setError] = useState("");
+  const [otpError, setOtpError] = useState("");
   const [otpVisible, setOtpVisible] = useState(false);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(30);
@@ -106,7 +107,7 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error sending OTP:", error);
-        setError("An error occurred. Please try again.");
+        setError("You are not registered yet! Please create your account.");
       }
     }
   };
@@ -123,12 +124,12 @@ const Login = () => {
         navigate("/user-profile");
       } else {
         setLoginSuccess(false);
-        setError(response.message || "Login failed. Please try again.");
+        // setError(response.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Error during login:", error);
       setLoginSuccess(false);
-      setError("An error occurred during login. Please try again.");
+      setOtpError("OTP does not match!");
     }
   };
 
@@ -138,6 +139,8 @@ const Login = () => {
       if (response.success) {
         setTimer(30); // Reset timer
         setResendVisible(false); // Hide resend text
+        setOtp(new Array(6).fill("")); // Clear the OTP input fields
+        setOtpError("");
       } else {
         setError(response.message || "Failed to resend OTP. Please try again.");
       }
@@ -210,6 +213,21 @@ const Login = () => {
               />
             ))}
           </div>
+
+          
+          
+          {
+          <div className={`flex  ${otpError ? 'items-center justify-between' : 'items-center justify-end'}`}>
+
+{otpError && (
+          <span
+            className={`text-[#FF3B3B] text-[12px] ${
+              otpError ? "animate-shake" : "animate-fadeIn"
+            }`}>
+            {otpError}
+          </span>
+        )}
+          
           {resendVisible ? (
             <span
               onClick={handleResendClick}
@@ -221,6 +239,8 @@ const Login = () => {
               00:{timer < 10 ? `0${timer}` : timer}
             </span>
           )}
+              </div>
+          }
         </div>
       )}
 
@@ -234,7 +254,7 @@ const Login = () => {
         }
       />
 
-      {loginSuccess !== null && (
+      {/* {loginSuccess !== null && (
         <div
           className={`mt-4 p-2 rounded ${
             loginSuccess
@@ -245,7 +265,7 @@ const Login = () => {
             ? "Login successful!"
             : "Login failed. Please try again."}
         </div>
-      )}
+      )} */}
     </>
   );
 };
