@@ -13,6 +13,8 @@ const Signup = () => {
   const [timer, setTimer] = useState(30);
   const [resendVisible, setResendVisible] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(null);
+  const [otpError, setOtpError] = useState("");
+
 
   const otpRefs = useRef([]);
   const navigate = useNavigate();
@@ -110,11 +112,12 @@ const Signup = () => {
           setTimer(30);
           setResendVisible(false);
         } else {
-          alert(response.message || "Failed to send OTP. Please try again.");
+          setEmailOrPhoneError(response.message || "Failed to send OTP. Please try again.");
         }
       } catch (error) {
         console.error("Error sending OTP", error);
-        alert("Failed to send OTP. Please try again.");
+        // alert("sdfsafsadfsdafsdfsdf");
+        setEmailOrPhoneError("You are already registered! Please try login.")
       }
     }
   };
@@ -134,12 +137,13 @@ const Signup = () => {
       } else {
         console.log("Signup failed:", response);
         setSignupSuccess(false);
-        alert(response.message || "Signup failed. Please try again.");
+        // alert(response.message || "Signup failed. Please try again.");
       }
     } catch (error) {
       console.error("Error occurred during signup:", error);
       setSignupSuccess(false);
-      alert("An error occurred during signup. Please try again.");
+      // alert("An error occurred during signup. Please try again.");
+      setOtpError("OTP does not match!");
     }
   };
 
@@ -149,12 +153,17 @@ const Signup = () => {
       if (response.success) {
         setTimer(30);
         setResendVisible(false);
+        setOtp(new Array(6).fill("")); // Clear the OTP input fields
+        setOtpError("");
       } else {
-        alert(response.message || "Failed to resend OTP. Please try again.");
+        // alert(response.message || "Failed to resend OTP. Please try again.");
+        setError(response.message || "Failed to resend OTP. Please try again.");
       }
     } catch (error) {
       console.error("Error resending OTP", error);
-      alert("Failed to resend OTP. Please try again.");
+      // alert("Failed to resend OTP. Please try again.");
+      setError("An error occurred. Please try again.");
+
     }
   };
 
@@ -230,17 +239,31 @@ const Signup = () => {
               />
             ))}
           </div>
+          {
+          <div className={`flex  ${otpError ? 'items-center justify-between' : 'items-center justify-end'}`}>
+
+{otpError && (
+          <span
+            className={`text-[#FF3B3B] text-[12px] ${
+              otpError ? "animate-shake" : "animate-fadeIn"
+            }`}>
+            {otpError}
+          </span>
+        )}
+          
           {resendVisible ? (
             <span
               onClick={handleResendClick}
               className="text-primary text-[14px] cursor-pointer text-end">
-              Resend
+              Resend OTP
             </span>
           ) : (
-            <span className=" text-[14px] text-end">
+            <span className="text-[14px] text-end">
               00:{timer < 10 ? `0${timer}` : timer}
             </span>
           )}
+              </div>
+          }
         </div>
       )}
 
@@ -260,18 +283,7 @@ const Signup = () => {
         />
       )}
 
-      {signupSuccess !== null && (
-        <div
-          className={`mt-4 p-2 rounded ${
-            signupSuccess
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}>
-          {signupSuccess
-            ? "Signup successful!"
-            : "Signup failed. Please try again."}
-        </div>
-      )}
+      
     </>
   );
 };
