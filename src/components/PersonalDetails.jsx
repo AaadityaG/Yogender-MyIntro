@@ -1,33 +1,17 @@
 import React, { useState } from 'react';
 import { UserRound } from 'lucide-react';
 import CustomPhoneInput from './CustomPhoneInput';
-import Cropper from 'react-easy-crop';
 import ReactModal from 'react-modal';
-import getCroppedImg from './getCroppedImg'; // Utility function to get the cropped image
-import Button1 from './Button1'; // Utility function to get the cropped image
-import "./PersonalDetails.css"
+import Button1 from './Button1';
+import { Cropper, CropperPreview, CircleStencil } from 'react-advanced-cropper';
+import 'react-advanced-cropper/dist/style.css';
+import './PersonalDetails.css';
 
 const PersonalDetails = () => {
   const [imageSrc, setImageSrc] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const onCropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
-
-  const showCroppedImage = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-      setCroppedImage(croppedImage);
-      setIsModalOpen(false);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const [cropperState, setCropperState] = useState(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -38,6 +22,14 @@ const PersonalDetails = () => {
         setIsModalOpen(true);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCrop = () => {
+    if (cropperState) {
+      const canvas = cropperState.getCanvas();
+      setCroppedImage(canvas.toDataURL());
+      setIsModalOpen(false);
     }
   };
 
@@ -57,13 +49,13 @@ const PersonalDetails = () => {
           className="group flex items-center justify-start gap-3 w-full max-w-[360px] my-2"
           onClick={() => document.getElementById('upload-input').click()}
         >
-            {croppedImage ? (
-              <img src={croppedImage} alt="Cropped" className="lg:w-20 md:w-20 w-14 rounded-full" />
-            ) : (
-              <span className="rounded-full group-hover:bg-blue-100 p-5 bg-[#dedede]">
+          {croppedImage ? (
+            <img src={croppedImage} alt="Cropped" className="lg:w-20 md:w-20 w-14 rounded-full" />
+          ) : (
+            <span className="rounded-full group-hover:bg-blue-100 p-5 bg-[#dedede]">
               <UserRound fill="#afb1b4" size={25} className="text-[#afb1b4]" />
-          </span>
-            )}
+            </span>
+          )}
           <span className="text-[14px] text-primary group-hover:text-black">
             {croppedImage ? 'Replace' : 'Upload Photo'}
           </span>
@@ -113,25 +105,22 @@ const PersonalDetails = () => {
         className="modal"
         overlayClassName="overlay"
       >
-        <p className='text-start mb-2'>Position and size of your photo</p>
-        <div className="crop-container">
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            cropShape="round"
-            showGrid={false}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
+        <p className="text-start mb-2">Position and size your photo</p>
+        <div className="crop-container" style={{ position: 'relative', width: '100%', height: '300px' }}>
+          {imageSrc && (
+            <Cropper
+              src={imageSrc}
+              stencilComponent={CircleStencil}
+              onChange={(cropper) => setCropperState(cropper)}
+              style={{ height: '300px' }}
+            />
+          )}
         </div>
         <div className="flex justify-end mt-4 gap-4">
           <button onClick={() => setIsModalOpen(false)} className="mr-2 px-4 py-2 bg-gray-200 rounded">
             Cancel
           </button>
-          <Button1 onClick={showCroppedImage} text="Save" className="px-10">
+          <Button1 onClick={handleCrop} text="Save" className="px-10">
             Save
           </Button1>
         </div>

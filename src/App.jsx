@@ -9,6 +9,7 @@ import CreateProfile from "./components/CreateProfile";
 import EditProfile from "./components/EditProfile";
 import UserProfile from "./components/UserProfile";
 import PublicProfile from "./components/PublicProfile";
+import ResumeDoc1 from "./components/ResumeDoc1";
 // import { AuthProvider } from './context/AuthContext';
 
 import { UserProfileProvider } from "./context/UserProfileContext";
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<MyIntro />} />
         <Route path="/create" element={<CreateProfile />} />
         <Route path="/edit" element={<EditProfile />} />
+        <Route path="/resume" element={<ResumeDoc1 />} />
         <Route
           path="/user-profile"
           element={
