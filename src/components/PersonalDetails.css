@@ -33,3 +33,21 @@
     background: #333;
   }
   
+
+/* Circular overlay to create the illusion of a circular crop */
+.crop-container {
+  position: relative;
+}
+
+.circle-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}

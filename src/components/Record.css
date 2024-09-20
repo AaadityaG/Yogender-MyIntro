@@ -5,3 +5,12 @@
             background-size: cover;
             margin-bottom: 10px;
 }
+
+
+@media print {
+    .icon-text-wrapper {
+      display: flex !important;
+      align-items: center !important;
+    }
+    /* Add more print-specific styles as needed */
+  }
